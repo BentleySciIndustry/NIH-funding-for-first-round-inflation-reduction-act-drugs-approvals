@@ -1,0 +1,10 @@
+﻿Input,SearchID,TIME_CUT_True,TIME_CUT
+"(""dipeptidyl peptidase 4""[MeSH Terms] OR ""dipeptidyl peptidase 4""[All Fields]) ",53,2006,2007
+"((""interleukin 12""[MeSH Terms] OR ""interleukin 12""[All Fields] OR ""il 12""[All Fields] OR (""interleukin 23""[MeSH Terms] OR ""interleukin 23""[All Fields] OR ""il 23""[All Fields])))",235,2009,2010
+factor Xa,63,2011,2012
+sodium glucose transporter,135,2013,2014
+factor Xa,48,2011,2012
+Neutral Endopeptidase,98,2015,2016
+bruton's tyrosine kinase,33,2013,2014
+"((""tumour necrosis factor alpha""[All Fields] OR ""tumor necrosis factor alpha""[MeSH Terms] OR (""tumor""[All Fields] AND ""necrosis""[All Fields] AND ""factor alpha""[All Fields]) OR ""tumor necrosis factor alpha""[All Fields] OR (""tumor""[All Fields] AND ""necrosis""[All Fields] AND ""factor""[All Fields] AND ""alpha""[All Fields]) OR ""tumor necrosis factor alpha""[All Fields])) AND ""immunology""[MeSH Subheading]",236,1998,1999
+ ,237,2000,2001
