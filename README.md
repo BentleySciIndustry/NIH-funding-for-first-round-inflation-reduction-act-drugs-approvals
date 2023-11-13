@@ -5,7 +5,7 @@ See README file in function_data for RePORTER input reference link table creatio
 Last Update 11-09-2023| by Edward W. Zhou
 
 
-#################################################################################################################################################################
+###########################################################################################################
 
 This code takes search terms for basic (target / Biological target or Mechanism Of Action or MOA from: SearchTerm_TargetOnly) and applied (drug names from :SearchTerm_Drug) to get total pubmed PMID list
 and NIH funding from RePORTER (Last Exporter csv download 9/18/23 - Accepted data range 1985 - 2020).
