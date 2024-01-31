@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[28]:
+# In[ ]:
 
 
-####### 10/30/23 last update by ED ###################
+####### 1/31/24 last update by ED ###################
 #### NOTE:  This assumes you ran Step 1 first
 #### NOTE:  This is only used if you want to breakdown output by drug (this will re-add all cross search duplicates = TargetOnly/Drug true by unique brandname only)
                 # Remember with this applied and basic unique totals no longer exist if cross-search TargetOnly/Drug mismatch for any shared PMID
@@ -29,7 +29,7 @@ Search_Year = Search_Year.rename(columns={'SearchID': 'Search_ID'})
 BRAND_ID = BRAND_ID.rename(columns={'SearchID': 'Search_ID'})
 
 
-# In[30]:
+# In[2]:
 
 
 PMID_DOWNLOADED_COUNT_Drug=ID_CORE_Total_Drug[['PMID','Search_ID','TIME_CUT']]
@@ -40,21 +40,21 @@ ID_CORE_Total_Target=ID_CORE_Total_Target.drop_duplicates()
 PMID_DOWNLOADED_COUNT=pd.concat([PMID_DOWNLOADED_COUNT_Drug,PMID_DOWNLOADED_COUNT_Target])
 
 
-# In[31]:
+# In[3]:
 
 
 PMID_DOWNLOADED_Analysis = PMID_DOWNLOADED_COUNT.groupby('Search_ID')['PMID'].nunique().reset_index()
 PMID_DOWNLOADED_Analysis.columns = ['Search_ID', 'PMID_Downloaded']
 
 
-# In[32]:
+# In[4]:
 
 
 BRAND_ID['Search_ID']=BRAND_ID['Search_ID'].astype(str)
 PMID_DOWNLOADED_Analysis['Search_ID']=PMID_DOWNLOADED_Analysis['Search_ID'].astype(str)
 
 
-# In[33]:
+# In[5]:
 
 
 def check_for_drug(x):
@@ -67,7 +67,7 @@ PMID_DOWNLOADED_Analysis['Data_Type_by_Drug'] = PMID_DOWNLOADED_Analysis['Search
 PMID_DOWNLOADED_Analysis=PMID_DOWNLOADED_Analysis[['Brand_Name','Data_Type_by_Drug','PMID_Downloaded']]
 
 
-# In[35]:
+# In[6]:
 
 
 ID_CORE_Total_Drug=ID_CORE_Total_Drug[['PMID','Search_ID']]
@@ -78,7 +78,7 @@ ID_CORE_Total_Target=ID_CORE_Total_Target[['PMID','Search_ID']]
 ID_CORE_Total_Target=ID_CORE_Total_Target.drop_duplicates()
 
 
-# In[36]:
+# In[7]:
 
 
 def remove_decimal_from_id(id_value):
@@ -93,7 +93,7 @@ ID_CORE_Total_Target['Search_ID'] = ID_CORE_Total_Target['Search_ID'].apply(remo
 Search_Year['Search_ID'] = Search_Year['Search_ID'].apply(remove_decimal_from_id)
 
 
-# In[37]:
+# In[8]:
 
 
 Grant_code_drug=ID_CORE_Total_Drug.merge(Grant_code,how='inner')
@@ -105,13 +105,13 @@ Grant_code=Grant_code.drop_duplicates()
 Grant_code['PMID'].nunique()
 
 
-# In[38]:
+# In[9]:
 
 
 Grant_code = Grant_code[Grant_code['Search_ID'] != "237"]
 
 
-# In[39]:
+# In[10]:
 
 
 Grant_code.drop('Search__ID', axis=1, inplace=True)
@@ -119,7 +119,7 @@ Grant_code.drop('Source_Search_Type', axis=1, inplace=True)
 Grant_code.drop('Search_Type', axis=1, inplace=True)
 
 
-# In[40]:
+# In[11]:
 
 
 ################ UQ_COMBO (PMID|Brand) Maker
@@ -131,7 +131,7 @@ Grant_code['PMID'] = Grant_code['PMID'].apply(remove_decimal_from_id)
 Grant_code['UQ_COMBO_APY']=Grant_code['ACTUAL_PROJECT_YEAR'].astype(str)+"|"+Grant_code['Brand_Name']
 
 
-# In[41]:
+# In[12]:
 
 
 ################ UQ_COMBO (PMID|Brand) Maker
@@ -143,7 +143,7 @@ Grant_code['PMID'] = Grant_code['PMID'].apply(remove_decimal_from_id)
 Grant_code['UQ_COMBO_PMID']=Grant_code['PMID'].astype(str)+"|"+Grant_code['Brand_Name']
 
 
-# In[42]:
+# In[13]:
 
 
 def COMBO_Linker(search_id):
@@ -163,7 +163,7 @@ uq_combo_with_drug = Grant_code[Grant_code['Data_Type_by_Drug'] == 'Drug']['UQ_C
 Grant_code.loc[Grant_code['UQ_COMBO_APY'].isin(uq_combo_with_drug), 'Data_Type_by_Drug'] = 'Drug'
 
 
-# In[43]:
+# In[14]:
 
 
 # Identify UQ_COMBO APY values which have at least one Drug
@@ -174,7 +174,7 @@ uq_combo_with_drug = Grant_code[Grant_code['Data_Type_by_APY'] == 'Drug']['ACTUA
 Grant_code.loc[Grant_code['ACTUAL_PROJECT_YEAR'].isin(uq_combo_with_drug), 'Data_Type_by_APY'] = 'Drug'
 
 
-# In[44]:
+# In[15]:
 
 
 # Identify UQ_COMBO PMID values which have at least one Drug
@@ -185,14 +185,14 @@ uq_combo_with_drug = Grant_code[Grant_code['Data_Type_by_PMID'] == 'Drug']['UQ_C
 Grant_code.loc[Grant_code['UQ_COMBO_PMID'].isin(uq_combo_with_drug), 'Data_Type_by_PMID'] = 'Drug'
 
 
-# In[45]:
+# In[16]:
 
 
 Grant_code = Grant_code.dropna(subset=['PMID'])
 Grant_code = Grant_code[Grant_code['PMID'].ne('') & Grant_code['PMID'].ne(0)]
 
 
-# In[46]:
+# In[17]:
 
 
 ####### TIME CUT +1 Year Correction (adjust for download year offset back to True approval cut year)
@@ -204,7 +204,7 @@ Grant_code['TIME_CUT']=Grant_code['TIME_CUT'].apply(remove_decimal_from_id)
 Grant_code['TIME_CUT']=Grant_code['TIME_CUT'].astype(str)
 
 
-# In[47]:
+# In[18]:
 
 
 #### 2018USD inflation adjustment
@@ -226,22 +226,50 @@ Grant_code.rename(columns = {"FY": "APY"},
           inplace = True)
 
 
-# In[48]:
+# In[19]:
 
 
 Grant_code = Grant_code.dropna(subset=['PMID'])
 Grant_code = Grant_code[Grant_code['PMID'].ne('') & Grant_code['PMID'].ne(0)]
 
 
-# In[51]:
+# In[20]:
+
+
+#### correction for APY on basic research shared by mutiple drugs
+Grant_code['Shared_Basic_Overide'] = 0
+## Factor Xa and sodium glucose transporter
+
+BrandNameOveride = ["Xarelto", "Eliquis", "Jardiance","Farxiga"]  
+APY_OVERIDE = ["2008R01HL047014","2010P01HL006350","2010P01HL046703","2011KL2RR029878","2011P01HL046703","2009R01CA111436","2009R01DK053867","2010P30DK079337","2010R01DK028602","2010R01DK056248","2010U01DK060995","2011F30DK082153","2011R01DK077133","2012K08DK084305","2012R01DK019567","2012R01DK056248"]
+
+# Iterate over the DataFrame
+for index, row in Grant_code.iterrows():
+    if row['Brand_Name'] in BrandNameOveride and row['ACTUAL_PROJECT_YEAR'] in APY_OVERIDE:
+        Grant_code.at[index, 'Data_Type_by_Drug'] = 'Drug'
+        Grant_code.at[index, 'Shared_Basic_Overide'] = 1
+        
+
+
+# In[21]:
 
 
 ######## Time cut by PMID PubYear to approval year
 Grant_code['TIME_CUT_FIC'] = Grant_code['TIME_CUT']
 
 #### First in class for targets adjustment ( Use for Basic/Target search ID that have an earlier FIC drug approval as cut year )
-# Grant_code.loc[Grant_code['Search_ID'] == "135", 'TIME_CUT_FIC'] = "2013"
-# Grant_code.loc[Grant_code['Search_ID'] == "63", 'TIME_CUT_FIC'] = "2011"
+for index, row in Grant_code.iterrows():
+    if row['Brand_Name'] == 'Eliquis' and row['Data_Type_by_Drug'] == 'TargetOnly':
+        Grant_code.at[index, 'TIME_CUT_FIC'] = 2011
+        
+for index, row in Grant_code.iterrows():
+    if row['Brand_Name'] == 'Jardiance' and row['Data_Type_by_Drug'] == 'TargetOnly':
+        Grant_code.at[index, 'TIME_CUT_FIC'] = 2013
+        
+for index, row in Grant_code.iterrows():
+    if row['Brand_Name'] == 'Farxiga' and row['Data_Type_by_Drug'] == 'TargetOnly':
+        Grant_code.at[index, 'TIME_CUT_FIC'] = 2013
+        
 
 Grant_code['Years_from_app'] = Grant_code['APY'].astype(int) - Grant_code['TIME_CUT'].astype(int)
 Grant_code['Years_from_app_FIC_TARGET'] = Grant_code['APY'].astype(int) - Grant_code['TIME_CUT_FIC'].astype(int)
@@ -253,7 +281,7 @@ Grant_code['Pre_Approval_APY'] = Grant_code['Years_from_app'] <= 0
 Grant_code['Pre_Approval_APY_FIC'] = Grant_code['Years_from_app_FIC_TARGET'] <= 0
 
 
-# In[52]:
+# In[22]:
 
 
 #### Use for data from 4+ Years after approval (not part of main method)
@@ -271,7 +299,7 @@ Grant_code=Grant_code.fillna(0)
 Grant_code_output=Grant_code
 
 
-# In[53]:
+# In[23]:
 
 
 cols_order = ["Brand_Name", 
@@ -305,6 +333,7 @@ cols_order = ["Brand_Name",
 "FY_START_Years_from_app_FIC_TARGET", 
 "Pre_Approval_APY", 
 "Pre_Approval_APY_FIC", 
+"Shared_Basic_Overide",
 "0_12_Year_Rule_FIC"
 ]
 Grant_code_output = Grant_code_output[cols_order]
@@ -316,26 +345,27 @@ Grant_code_output = Grant_code_output[cols_order]
 
 
 
-# In[54]:
+# In[24]:
 
 
 Grant_code_output.to_csv("IRA_10Drugs_Main_Output.csv",index=None)
+Grant_code_output.drop('Shared_Basic_Overide', axis=1, inplace=True)
 
 
-# In[55]:
+# In[25]:
 
 
 Grant_code['CC_ID']= Grant_code['Brand_Name']+"_"+Grant_code['Data_Type_by_Drug']+"_"+Grant_code['ACTUAL_PROJECT_YEAR']
 
 
-# In[56]:
+# In[26]:
 
 
 Grant_code_ID=Grant_code[['CC_ID','Data_Type_by_Drug','Brand_Name']]
 Grant_code_ID=Grant_code_ID.drop_duplicates()
 
 
-# In[57]:
+# In[27]:
 
 
 def Applied_Basic_research_split(row):
@@ -347,7 +377,7 @@ def Applied_Basic_research_split(row):
 Grant_code = Grant_code[Grant_code.apply(Applied_Basic_research_split, axis=1)]
 
 
-# In[58]:
+# In[28]:
 
 
 ############ USE FOR FIC CC analysis only
@@ -372,44 +402,44 @@ Grant_code_CC=Grant_code_CC.drop_duplicates()
 
 
 
-# In[59]:
+# In[29]:
 
 
 Grant_code_CC=pd.pivot_table(Grant_code_CC,index='CC_ID',columns='Years_from_app',values='Original_COST', aggfunc='sum')
 Grant_code_CC=Grant_code_CC.fillna(0)
 
 
-# In[60]:
+# In[30]:
 
 
 Grant_code_CC.to_csv('CC_CHECK.csv')
 
 
-# In[61]:
+# In[31]:
 
 
 Grant_code_CC=pd.read_csv('CC_CHECK.csv')
 
 
-# In[62]:
+# In[32]:
 
 
 Grant_code_CC=Grant_code_CC.merge(Grant_code_ID,how='inner')
 
 
-# In[63]:
+# In[33]:
 
 
 Grant_code_CC.to_csv('CC_DEBUG.csv',index=None)
 
 
-# In[64]:
+# In[34]:
 
 
 Grant_code_CC_Grouped = Grant_code_CC.groupby(['Brand_Name', 'Data_Type_by_Drug']).sum().reset_index()
 
 
-# In[65]:
+# In[35]:
 
 
 def is_number(s):
@@ -433,7 +463,7 @@ Grant_code_CC_Grouped = Grant_code_CC_Grouped[final_cols]
 Grant_code_CC_Grouped_Raw=Grant_code_CC_Grouped.copy()
 
 
-# In[ ]:
+# In[36]:
 
 
 def modify_rightmost_column(df):
@@ -448,7 +478,7 @@ def modify_rightmost_column(df):
 df_modified = modify_rightmost_column(Grant_code_CC_Grouped)
 
 
-# In[67]:
+# In[37]:
 
 
 import pandas as pd
@@ -478,19 +508,19 @@ def modify_until_discount(df):
 df_modified = modify_until_discount(df_modified)
 
 
-# In[68]:
+# In[38]:
 
 
 df_modified['Discount_Type'] ="0%"
 
 
-# In[69]:
+# In[39]:
 
 
 df_modified=pd.concat([df_modified, Grant_code_CC_Grouped_Raw])
 
 
-# In[70]:
+# In[40]:
 
 
 df_modified.sort_values(by='Brand_Name')
@@ -498,13 +528,13 @@ df_modified.sort_values(by=['Discount_Type', 'Brand_Name'])
 df_modified.to_csv('CC_10Drugs_0%_HandCheck.csv',index=None)
 
 
-# In[72]:
+# In[41]:
 
 
 Grant_code_FIC_RULE = Grant_code.loc[Grant_code['0_12_Year_Rule_FIC'] == 1]
 
 
-# In[73]:
+# In[42]:
 
 
 Grant_code_unique_COST = Grant_code_FIC_RULE.drop_duplicates(subset=['Brand_Name', 'Data_Type_by_Drug', 'ACTUAL_PROJECT_YEAR', 'APY_COST_inf2018'])
@@ -514,7 +544,7 @@ result_COST = Grant_code_unique_COST.groupby(['Brand_Name', 'Data_Type_by_Drug']
 result_COST = result_COST.rename(columns={'APY_COST_inf2018':'COST_SUM'})
 
 
-# In[74]:
+# In[43]:
 
 
 Grant_code_unique_APY=Grant_code_FIC_RULE[['Brand_Name', 'Data_Type_by_Drug', 'ACTUAL_PROJECT_YEAR']]
@@ -524,7 +554,7 @@ result_APY = Grant_code_unique_APY.groupby(['Brand_Name', 'Data_Type_by_Drug'])[
 result_APY.rename(columns={'ACTUAL_PROJECT_YEAR': 'Count_of_APY(0-12Year)'}, inplace=True)
 
 
-# In[75]:
+# In[44]:
 
 
 Grant_code_unique_PMID=Grant_code_FIC_RULE[['Brand_Name', 'Data_Type_by_PMID', 'PMID']]
@@ -543,7 +573,7 @@ Item_Cost_Overview_12_YEARS['COST_SUM_Mills']=Item_Cost_Overview_12_YEARS['COST_
 Item_Cost_Overview_12_YEARS.drop('COST_SUM', axis=1, inplace=True)
 
 
-# In[76]:
+# In[45]:
 
 
 Grant_code_unique_COST = Grant_code.drop_duplicates(subset=['Brand_Name', 'Data_Type_by_Drug', 'ACTUAL_PROJECT_YEAR', 'APY_COST_inf2018'])
@@ -576,23 +606,28 @@ Item_Cost_Overview_ALL_YEARS['COST_SUM_Mills(ALL_YEAR)']=Item_Cost_Overview_ALL_
 Item_Cost_Overview_ALL_YEARS.drop('COST_SUM', axis=1, inplace=True)
 
 
-# In[77]:
+# In[46]:
 
 
 Item_Cost_Overview_ALL = Item_Cost_Overview_12_YEARS.merge(Item_Cost_Overview_ALL_YEARS, on=['Brand_Name', 'Data_Type_by_Drug'], how='inner')
 Item_Cost_Overview_ALL = PMID_DOWNLOADED_Analysis.merge(Item_Cost_Overview_ALL, on=['Brand_Name', 'Data_Type_by_Drug'], how='inner')
 
 
-# In[79]:
+# In[47]:
 
 
 Item_Cost_Overview_ALL['%_PMID_Funded(0_12)']=Item_Cost_Overview_ALL['NIH_PMID(0_12Year)']/Item_Cost_Overview_ALL['PMID_Downloaded']
 Item_Cost_Overview_ALL['%_PMID_Funded(ALL_YEAR)']=Item_Cost_Overview_ALL['NIH_PMID(ALL_YEAR)']/Item_Cost_Overview_ALL['PMID_Downloaded']
 
 
-# In[81]:
+# In[48]:
 
 
 Item_Cost_Overview_ALL.to_csv('Item_Cost_Overview.csv',index=None)
+
+
+# In[ ]:
+
+
 os.remove('CC_CHECK.csv')
 
